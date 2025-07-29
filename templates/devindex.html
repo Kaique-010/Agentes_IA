@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>🧠 Agente Programador</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(#0d2339, #5e5d60);
+            margin: 0;
+            min-height: 100vh;
+            gap: 4rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 4rem;
+            padding: 2rem;
+        }
+
+        .sidebar {
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(#16204a, #5e5d60);
+            color: aliceblue;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 10px #f5c9efaa;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h5 {
+            margin-top: 0;
+            color: #00adb5;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 4px 4px 0 0;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .bg-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .bg-info {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+
+        .bg-success {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .bg-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+            background: linear-gradient(#16204a, #5e5d60);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 0 10px #f5c9efaa;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00adb5;
+            margin: 0 0 1rem 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            background-color: #090d2b;
+            color: #f1f1f1;
+            border: 2px solid #00adb5;
+            border-radius: 6px;
+            padding: 1rem 1rem 1rem 2.5rem;
+            font-size: 1.1rem;
+            resize: vertical;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M4 17h16v2H4zm0-12h2v8H4zm4 0h2v8H8zm4 0h2v8h-2zm4 0h2v8h-2z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 10px 10px;
+            background-size: 18px;
+        }
+
+        textarea:focus {
+            border-color: #00ffe5;
+            outline: none;
+            background-color: #0f0f0f;
+        }
+
+        button {
+            align-self: flex-end;
+            background-color: #00adb5;
+            color: #121212;
+            font-weight: 700;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #008b8f;
+        }
+
+        button:active {
+            background-color: #005f61;
+        }
+
+        pre#resposta {
+            background-color: #090d2b;
+            border: 2px solid #00adb5;
+            border-radius: 6px;
+            padding: 1rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            min-height: 120px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 1rem;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1rem;
+            }
+
+            .sidebar {
+                max-width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+
+            .feature-card {
+                flex: 1 1 45%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="feature-card">
+            <h5>⚙️ Funcionalidades</h5>
+            <ul>
+                <li>✅ Aplicações em Django/Python</li>
+                <li>✅ Integração APIs REST</li>
+                <li>✅ Código em Js com React Native</li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h5>🧰 Ferramentas Ativas Backend</h5>
+            <span class="badge bg-primary">BoilerPlates</span>
+            <span class="badge bg-info">Ajuste de Código</span>
+            <span class="badge bg-success">Auxílio em APIs</span>
+        </div>
+        <div class="feature-card">
+            <h5>🧰 Ferramentas Ativas FrontEnd</h5>
+            <span class="badge bg-primary">react_native_scaffold</span>
+            <span class="badge bg-info">Gerador de snippet</span>
+            <span class="badge bg-success">Refatoracao</span>
+            <span class="badge bg-warning">Aplicação de Styles</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Agente Programador</h1>
+        <div class="loading" id="loading">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <span class="ms-2">Agente processando...</span>
+        </div>
+
+        <pre id="resposta" placeholder="Resposta do Agente"></pre>
+        <form id="form-prompt">
+
+            <textarea id="mensagem" name="mensagem"
+                placeholder="Ex: Crie uma APIView listando produtos filtrados por categoria"></textarea>
+
+            <button type=" submit" id="enviar-btn">
+                <span id="btn-text">Enviar</span>
+                <span id="btn-loading" style="display: none;">⏳</span>
+            </button>
+        </form>
+
+    </div>
+
+    <script>
+        const form = document.getElementById('form-prompt');
+        const respostaEl = document.getElementById('resposta');
+        const btn = document.getElementById('enviar-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnLoading = document.getElementById('btn-loading');
+        const loading = document.getElementById('loading');
+
+        // Inicialmente esconde o loading
+        loading.style.display = 'none';
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const mensagem = document.getElementById('mensagem').value.trim();
+            if (!mensagem) {
+                respostaEl.textContent = "Digite algo antes de enviar.";
+                return;
+            }
+
+            respostaEl.textContent = '';
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            loading.style.display = 'flex';
+
+            try {
+                const res = await fetch('/agent', {
+                    method: 'POST',
+                    body: new FormData(form),
+                });
+
+                const data = await res.json();
+                respostaEl.textContent = data.resposta || "Sem resposta do servidor.";
+            } catch (err) {
+                respostaEl.textContent = `❌ Erro: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+                loading.style.display = 'none'; // Esconde loading
+            }
+        });
+    </script>
+
+</body>
+
+</html>
