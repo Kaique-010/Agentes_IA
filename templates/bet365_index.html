@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente Bet365 Sports Betting</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .bet365-header {
+            background: linear-gradient(135deg, #00a651, #ffb400);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .sports-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00a651;
+        }
+        
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-btn {
+            background: #00a651;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .quick-btn:hover {
+            background: #008a44;
+        }
+        
+        .quick-btn.secondary {
+            background: #ffb400;
+            color: #000;
+        }
+        
+        .quick-btn.secondary:hover {
+            background: #e6a200;
+        }
+        
+        .intention-badge {
+            display: inline-block;
+            background: #00a651;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .responsible-gambling {
+            background: #2a2a2a;
+            border-left: 4px solid #ffb400;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .responsible-gambling h4 {
+            color: #ffb400;
+            margin: 0 0 10px 0;
+        }
+        
+        .responsible-gambling p {
+            color: #ccc;
+            margin: 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bet365-header">
+            <h1>🎯 Agente Bet365 Sports Betting</h1>
+            <p>Especialista em análise esportiva e apostas responsáveis</p>
+        </div>
+
+        <div class="responsible-gambling">
+            <h4>⚠️ Jogo Responsável</h4>
+            <p>Este agente é para fins educacionais e de análise. Sempre aposte com responsabilidade e dentro de seus limites financeiros.</p>
+        </div>
+
+        <div class="sports-stats">
+            <div class="stat-card">
+                <div class="stat-value">⚽</div>
+                <div class="stat-label">Futebol</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">🏀</div>
+                <div class="stat-label">Basquete</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">🎾</div>
+                <div class="stat-label">Tênis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">🎮</div>
+                <div class="stat-label">E-Sports</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <button class="quick-btn" onclick="setPrompt('Analise Real Madrid vs Barcelona')">⚽ Análise Futebol</button>
+            <button class="quick-btn" onclick="setPrompt('Estratégia de apostas NBA')">🏀 NBA Strategy</button>
+            <button class="quick-btn" onclick="setPrompt('Value bets Premier League')">💰 Value Bets</button>
+            <button class="quick-btn secondary" onclick="setPrompt('Gestão de bankroll')">📊 Bankroll</button>
+            <button class="quick-btn secondary" onclick="setPrompt('ROI mensal apostas')">📈 Relatório</button>
+        </div>
+
+        <form id="bet365Form">
+            <div class="input-group">
+                <textarea 
+                    id="mensagem" 
+                    name="mensagem" 
+                    placeholder="Digite sua pergunta sobre apostas esportivas... Ex: 'Analise Flamengo vs Palmeiras', 'Odds Champions League', 'Estratégia basquete NBA'"
+                    rows="3"
+                    required
+                ></textarea>
+                <button type="submit" id="submitBtn">
+                    <span id="btnText">Analisar</span>
+                    <span id="btnLoader" style="display: none;">⏳</span>
+                </button>
+            </div>
+        </form>
+
+        <div id="response" class="response-container" style="display: none;">
+            <div class="response-header">
+                <h3>🤖 Análise do Agente</h3>
+                <span id="intentionBadge" class="intention-badge"></span>
+            </div>
+            <div id="responseContent" class="response-content"></div>
+        </div>
+    </div>
+
+    <script>
+        function setPrompt(text) {
+            document.getElementById('mensagem').value = text;
+        }
+
+        document.getElementById('bet365Form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            const responseDiv = document.getElementById('response');
+            const responseContent = document.getElementById('responseContent');
+            const intentionBadge = document.getElementById('intentionBadge');
+            
+            // Mostrar loading
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline';
+            submitBtn.disabled = true;
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/bet365-agent', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.resposta) {
+                    responseContent.innerHTML = data.resposta.replace(/\n/g, '<br>');
+                    intentionBadge.textContent = data.intencao || 'geral';
+                    responseDiv.style.display = 'block';
+                    responseDiv.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    responseContent.innerHTML = '❌ Erro ao processar solicitação';
+                    responseDiv.style.display = 'block';
+                }
+            } catch (error) {
+                responseContent.innerHTML = '❌ Erro de conexão: ' + error.message;
+                responseDiv.style.display = 'block';
+            } finally {
+                // Esconder loading
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('mensagem').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    </script>
+</body>
+</html>

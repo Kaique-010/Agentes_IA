@@ -82,3 +82,33 @@ MCP_DEV_CONFIG = {
         },
     },
 }
+
+MCP_BINANCE = {
+    'passos_sequenciais': {
+        'url': f'https://server.smithery.ai/@xinzhongyouhai/mcp-sequentialthinking-tools/mcp?api_key={SMITHERY_API_KEY}&profile=liable-rhinoceros-zBrJHu',
+        'transport': 'streamable_http',
+    },
+    'buscas_relevantes': {
+        'url': f'https://server.smithery.ai/@nickclyde/duckduckgo-mcp-server/mcp?api_key={SMITHERY_API_KEY}&profile=liable-rhinoceros-zBrJHu',
+        'transport': 'streamable_http',
+    },
+    'automacao': {
+        'url': f'https://server.smithery.ai/@upstash/context7-mcp/mcp?api_key={SMITHERY_API_KEY}&profile=liable-rhinoceros-zBrJHu',
+        'transport': 'streamable_http',
+    },
+}
+
+MCP_BET365 = {
+    'passos_sequenciais': {
+        'url': f'https://server.smithery.ai/@xinzhongyouhai/mcp-sequentialthinking-tools/mcp?api_key={SMITHERY_API_KEY}&profile=liable-rhinoceros-zBrJHu',
+        'transport': 'streamable_http',
+    },
+    'buscas_relevantes': {
+        'url': f'https://server.smithery.ai/@nickclyde/duckduckgo-mcp-server/mcp?api_key={SMITHERY_API_KEY}&profile=liable-rhinoceros-zBrJHu',
+        'transport': 'streamable_http',
+    },
+    'analise_esportiva': {
+        'url': f'https://server.smithery.ai/@upstash/context7-mcp/mcp?api_key={SMITHERY_API_KEY}&profile=liable-rhinoceros-zBrJHu',
+        'transport': 'streamable_http',
+    },
+}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente Binance Trading</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .binance-header {
+            background: linear-gradient(135deg, #f0b90b, #f8d12f);
+            color: #000;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .trading-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f0b90b;
+        }
+        
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-btn {
+            background: #f0b90b;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .quick-btn:hover {
+            background: #d4a00a;
+        }
+        
+        .intention-badge {
+            display: inline-block;
+            background: #f0b90b;
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="binance-header">
+            <h1>🚀 Agente Binance Trading</h1>
+            <p>Especialista em análise de mercado e automação de trading</p>
+        </div>
+
+        <div class="trading-stats">
+            <div class="stat-card">
+                <div class="stat-value">--</div>
+                <div class="stat-label">BTC/USDT</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">--</div>
+                <div class="stat-label">ETH/USDT</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">--</div>
+                <div class="stat-label">Portfolio</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">--</div>
+                <div class="stat-label">P&L 24h</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <button class="quick-btn" onclick="setPrompt('Analise o BTC/USDT com indicadores técnicos')">📊 Análise BTC</button>
+            <button class="quick-btn" onclick="setPrompt('Criar estratégia de trading automático')">🤖 Auto Trading</button>
+            <button class="quick-btn" onclick="setPrompt('Calcular stop loss para posição atual')">🛡️ Stop Loss</button>
+            <button class="quick-btn" onclick="setPrompt('Relatório de performance do portfolio')">📈 Relatório</button>
+            <button class="quick-btn" onclick="setPrompt('Configurar API da Binance')">⚙️ Config API</button>
+        </div>
+
+        <form id="binanceForm">
+            <div class="input-group">
+                <textarea 
+                    id="mensagem" 
+                    name="mensagem" 
+                    placeholder="Digite sua pergunta sobre trading na Binance... Ex: 'Analise o mercado de BTC', 'Criar ordem de compra', 'Calcular risco da posição'"
+                    rows="3"
+                    required
+                ></textarea>
+                <button type="submit" id="submitBtn">
+                    <span id="btnText">Executar</span>
+                    <span id="btnLoader" style="display: none;">⏳</span>
+                </button>
+            </div>
+        </form>
+
+        <div id="response" class="response-container" style="display: none;">
+            <div class="response-header">
+                <h3>🤖 Resposta do Agente</h3>
+                <span id="intentionBadge" class="intention-badge"></span>
+            </div>
+            <div id="responseContent" class="response-content"></div>
+        </div>
+    </div>
+
+    <script>
+        function setPrompt(text) {
+            document.getElementById('mensagem').value = text;
+        }
+
+        document.getElementById('binanceForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            const responseDiv = document.getElementById('response');
+            const responseContent = document.getElementById('responseContent');
+            const intentionBadge = document.getElementById('intentionBadge');
+            
+            // Mostrar loading
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline';
+            submitBtn.disabled = true;
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/binance-agent', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.resposta) {
+                    responseContent.innerHTML = data.resposta.replace(/\n/g, '<br>');
+                    intentionBadge.textContent = data.intencao || 'geral';
+                    responseDiv.style.display = 'block';
+                    responseDiv.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    responseContent.innerHTML = '❌ Erro ao processar solicitação';
+                    responseDiv.style.display = 'block';
+                }
+            } catch (error) {
+                responseContent.innerHTML = '❌ Erro de conexão: ' + error.message;
+                responseDiv.style.display = 'block';
+            } finally {
+                // Esconder loading
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('mensagem').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    </script>
+</body>
+</html>
