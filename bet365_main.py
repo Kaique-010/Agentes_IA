@@ -67,6 +67,20 @@ async def main():
 
     config = {"configurable": {"thread_id": "bet365_agent_001"}}
 
+    # Inicializar gerenciador de memória
+    from utils.memory_manager import PersistentMemoryManager
+    memory_manager = PersistentMemoryManager()
+    
+    # Gerar IDs únicos
+    import hashlib
+    user_id = hashlib.md5("bet365_user".encode()).hexdigest()[:16]
+    thread_id = f"bet365_{user_id}"
+    
+    print(f"👤 User ID: {user_id}")
+    print(f"🧵 Thread ID: {thread_id}")
+    
+    checkpointer = memory_manager.get_sqlite_saver("bet365")
+    
     while True:
         try:
             entrada = input("🎯 Bet365> ")

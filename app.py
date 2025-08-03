@@ -1,3 +1,5 @@
+"""Agenre de Integrações em apis"""
+
 import asyncio
 import uuid
 import logging
@@ -85,15 +87,23 @@ async def create_agent_with_fallback():
 async def run_agent_async(agent, message, config):
     try:
         responses = []
-        async for chunk in agent.astream({"messages": [message]}, config):
-            if 'messages' in chunk:
-                for msg in chunk['messages']:
-                    if hasattr(msg, 'content') and msg.content:
+        async for step in agent.astream({"messages": [message]}, config, stream_mode='values'):
+            if 'messages' in step and step['messages']:
+                last_message = step['messages'][-1]
+                if hasattr(last_message, 'content') and last_message.content:
+                    # Só adiciona se for uma mensagem do AI (não do usuário)
+                    if getattr(last_message, 'type', None) == 'ai':
+                        # Converter lista de strings em uma string única
+                        content = last_message.content
+                        if isinstance(content, list):
+                            content = '\n\n'.join(content)
+                        
                         responses.append({
-                            'type': getattr(msg, 'type', 'ai'),
-                            'content': msg.content
+                            'type': 'ai',
+                            'content': content
                         })
-
+        
+        print('Respostas:', responses)
         return {'success': True, 'responses': responses}
 
     except Exception as e:

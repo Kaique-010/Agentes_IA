@@ -6,6 +6,7 @@
     <title>🧠 Agente Programador</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -168,6 +169,76 @@
             scrollbar-width: thin;
         }
 
+        .memory-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .memory-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .memory-btn:hover {
+            background: #5a6268;
+        }
+
+        .memory-btn.warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .memory-btn.warning:hover {
+            background: #e0a800;
+        }
+
+        .memory-btn.info {
+            background: #17a2b8;
+        }
+
+        .memory-btn.info:hover {
+            background: #138496;
+        }
+
+        .memory-btn.success {
+            background: #28a745;
+        }
+
+        .memory-btn.success:hover {
+            background: #218838;
+        }
+
+        .context-display {
+            background: #1a1a2e;
+            border: 1px solid #00adb5;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .context-item {
+            background: #16213e;
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .context-type {
+            color: #00adb5;
+            font-weight: bold;
+        }
+
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -197,6 +268,8 @@
                 <li>✅ Aplicações em Django/Python</li>
                 <li>✅ Integração APIs REST</li>
                 <li>✅ Código em Js com React Native</li>
+                <li>🧠 Memória Persistente</li>
+                <li>⚙️ Preferências Personalizadas</li>
             </ul>
         </div>
         <div class="feature-card">
@@ -212,10 +285,25 @@
             <span class="badge bg-success">Refatoracao</span>
             <span class="badge bg-warning">Aplicação de Styles</span>
         </div>
+        <div class="feature-card">
+            <h5>🧠 Status da Memória</h5>
+            <div id="memoryStatus">
+                <p>📊 Contexto: <span id="contextCount">0</span> itens</p>
+                <p>⚙️ Preferências: <span id="prefsCount">0</span> configuradas</p>
+                <p>📈 Sessão: <span id="sessionTime">Nova</span></p>
+            </div>
+        </div>
     </div>
 
     <div class="container">
-        <h1>Agente Programador</h1>
+        <h1>🧠 Agente Programador</h1>
+        
+        <!-- Contexto Anterior -->
+        <div id="contextDisplay" class="context-display" style="display: none;">
+            <h6 style="color: #00adb5; margin-bottom: 10px;">📚 Contexto Anterior:</h6>
+            <div id="contextItems"></div>
+        </div>
+        
         <div class="loading" id="loading">
             <div class="spinner-border spinner-border-sm text-primary" role="status">
                 <span class="visually-hidden">Carregando...</span>
@@ -224,19 +312,95 @@
         </div>
 
         <pre id="resposta" placeholder="Resposta do Agente"></pre>
+        
         <form id="form-prompt">
-
             <textarea id="mensagem" name="mensagem"
                 placeholder="Ex: Crie uma APIView listando produtos filtrados por categoria"></textarea>
 
-            <button type=" submit" id="enviar-btn">
+            <button type="submit" id="enviar-btn">
                 <span id="btn-text">Enviar</span>
                 <span id="btn-loading" style="display: none;">⏳</span>
             </button>
         </form>
 
+        <!-- Controles de Memória -->
+        <div class="memory-controls">
+            <button type="button" class="memory-btn warning" onclick="clearMemory()">🧹 Limpar Memória</button>
+            <button type="button" class="memory-btn info" onclick="showPreferences()">⚙️ Preferências</button>
+            <button type="button" class="memory-btn success" onclick="loadContext()">📚 Carregar Contexto</button>
+            <button type="button" class="memory-btn" onclick="showMetrics()">📊 Métricas</button>
+        </div>
     </div>
 
+    <!-- Modal para preferências -->
+    <div class="modal fade" id="preferencesModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: #1a1a2e; color: white;">
+                <div class="modal-header">
+                    <h5 class="modal-title">⚙️ Preferências do Desenvolvedor</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="preferences-form">
+                        <div class="mb-3">
+                            <label class="form-label">Framework Preferido:</label>
+                            <select class="form-select" name="framework">
+                                <option value="django">Django</option>
+                                <option value="fastapi">FastAPI</option>
+                                <option value="flask">Flask</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Estilo de Código:</label>
+                            <select class="form-select" name="code_style">
+                                <option value="detailed">Detalhado com comentários</option>
+                                <option value="concise">Conciso</option>
+                                <option value="minimal">Mínimo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Linguagem Frontend:</label>
+                            <select class="form-select" name="frontend_lang">
+                                <option value="react_native">React Native</option>
+                                <option value="flutter">Flutter</option>
+                                <option value="ionic">Ionic</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nível de Explicação:</label>
+                            <select class="form-select" name="explanation_level">
+                                <option value="beginner">Iniciante</option>
+                                <option value="intermediate">Intermediário</option>
+                                <option value="advanced">Avançado</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="savePreferences()">💾 Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para métricas -->
+    <div class="modal fade" id="metricsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background: #1a1a2e; color: white;">
+                <div class="modal-header">
+                    <h5 class="modal-title">📊 Métricas de Performance</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="metricsContent">
+                        <p>Carregando métricas...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const form = document.getElementById('form-prompt');
         const respostaEl = document.getElementById('resposta');
@@ -247,6 +411,12 @@
 
         // Inicialmente esconde o loading
         loading.style.display = 'none';
+
+        // Carregar status da memória ao inicializar
+        window.addEventListener('load', function() {
+            loadMemoryStatus();
+            loadContext();
+        });
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -270,17 +440,177 @@
 
                 const data = await res.json();
                 respostaEl.textContent = data.resposta || "Sem resposta do servidor.";
+                
+                // Atualizar status da memória após resposta
+                setTimeout(loadMemoryStatus, 1000);
             } catch (err) {
                 respostaEl.textContent = `❌ Erro: ${err.message}`;
             } finally {
                 btn.disabled = false;
                 btnText.style.display = 'inline';
                 btnLoading.style.display = 'none';
-                loading.style.display = 'none'; // Esconde loading
+                loading.style.display = 'none';
             }
         });
+
+        async function clearMemory() {
+            try {
+                const res = await fetch('/clear_memory', { method: 'POST' });
+                const data = await res.json();
+                alert('🧹 Memória limpa com sucesso!');
+                loadMemoryStatus();
+                document.getElementById('contextDisplay').style.display = 'none';
+            } catch (err) {
+                alert('❌ Erro ao limpar memória: ' + err.message);
+            }
+        }
+
+        function showPreferences() {
+            const modal = new bootstrap.Modal(document.getElementById('preferencesModal'));
+            modal.show();
+        }
+
+        async function savePreferences() {
+            const form = document.getElementById('preferences-form');
+            const formData = new FormData(form);
+            
+            try {
+                for (let [key, value] of formData.entries()) {
+                    const res = await fetch('/save_preference', {
+                        method: 'POST',
+                        body: new URLSearchParams({ key, value })
+                    });
+                }
+                alert('⚙️ Preferências salvas com sucesso!');
+                bootstrap.Modal.getInstance(document.getElementById('preferencesModal')).hide();
+                loadMemoryStatus();
+            } catch (err) {
+                alert('❌ Erro ao salvar: ' + err.message);
+            }
+        }
+
+        async function loadContext() {
+            try {
+                const res = await fetch('/get_context');
+                const data = await res.json();
+                
+                if (data.context && data.context.length > 0) {
+                    const contextDisplay = document.getElementById('contextDisplay');
+                    const contextItems = document.getElementById('contextItems');
+                    
+                    contextItems.innerHTML = '';
+                    data.context.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'context-item';
+                        div.innerHTML = `
+                            <span class="context-type">${item.type}:</span> 
+                            ${item.content.prompt ? item.content.prompt.substring(0, 100) + '...' : 'Contexto anterior'}
+                        `;
+                        contextItems.appendChild(div);
+                    });
+                    
+                    contextDisplay.style.display = 'block';
+                } else {
+                    document.getElementById('contextDisplay').style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Erro ao carregar contexto:', err);
+            }
+        }
+
+        async function loadMemoryStatus() {
+            try {
+                const res = await fetch('/memory_status');
+                const data = await res.json();
+                
+                document.getElementById('contextCount').textContent = data.context_count || 0;
+                document.getElementById('prefsCount').textContent = data.preferences_count || 0;
+                document.getElementById('sessionTime').textContent = data.session_time || 'Nova';
+            } catch (err) {
+                console.error('Erro ao carregar status da memória:', err);
+            }
+        }
+
+        async function showMetrics() {
+            try {
+                const res = await fetch('/metrics');
+                const data = await res.json();
+                
+                const metricsContent = document.getElementById('metricsContent');
+                if (data.metrics && data.metrics.length > 0) {
+                    let html = '<div class="row">';
+                    
+                    // Agrupar métricas por tipo
+                    const grouped = {};
+                    data.metrics.forEach(metric => {
+                        if (!grouped[metric.type]) grouped[metric.type] = [];
+                        grouped[metric.type].push(metric);
+                    });
+                    
+                    Object.keys(grouped).forEach(type => {
+                        const metrics = grouped[type];
+                        const avg = metrics.reduce((sum, m) => sum + m.value, 0) / metrics.length;
+                        
+                        html += `
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-dark">
+                                    <div class="card-body">
+                                        <h6 class="card-title">${type}</h6>
+                                        <p class="card-text">Média: ${avg.toFixed(2)}</p>
+                                        <p class="card-text">Total: ${metrics.length} registros</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                    metricsContent.innerHTML = html;
+                } else {
+                    metricsContent.innerHTML = '<p>Nenhuma métrica disponível ainda.</p>';
+                }
+                
+                const modal = new bootstrap.Modal(document.getElementById('metricsModal'));
+                modal.show();
+            } catch (err) {
+                alert('❌ Erro ao carregar métricas: ' + err.message);
+            }
+        }
     </script>
-
 </body>
-
 </html>
+
+async function clearMemory() {
+    try {
+        const res = await fetch('/clear_memory', { method: 'POST' });
+        const data = await res.json();
+        alert('Memória limpa com sucesso!');
+        location.reload();
+    } catch (err) {
+        alert('Erro ao limpar memória: ' + err.message);
+    }
+}
+
+function showPreferences() {
+    const modal = new bootstrap.Modal(document.getElementById('preferencesModal'));
+    modal.show();
+}
+
+async function savePreferences() {
+    const form = document.getElementById('preferences-form');
+    const formData = new FormData(form);
+    
+    try {
+        for (let [key, value] of formData.entries()) {
+            const res = await fetch('/save_preference', {
+                method: 'POST',
+                body: new URLSearchParams({ key, value })
+            });
+        }
+        alert('Preferências salvas!');
+        bootstrap.Modal.getInstance(document.getElementById('preferencesModal')).hide();
+    } catch (err) {
+        alert('Erro ao salvar: ' + err.message);
+    }
+}
+</script>
